@@ -13,7 +13,7 @@ public:
     int type;
     int planet_index;
 
-    Particle(int type, glm::vec3 position, float radius, float atraction, int planet_index)
+    Particle(int type, glm::vec3 position, float radius, float attraction, int planet_index)
     {
         this->type = type;
         this->position = position;
@@ -29,9 +29,9 @@ public:
             if (&p != this)
             {
                 float distance_to_particle = glm::distance(position, p.position);
-                glm::vec3 direction_to_particle = position - p.position;
+                glm::vec3 direction_to_particle = glm::normalize(position - p.position);
                 acceleration_summation +=
-                    direction_to_particle / distance_to_particle * p.attraction;
+                    (direction_to_particle / distance_to_particle * p.attraction);
             }
         }
         acceleration = acceleration_summation;

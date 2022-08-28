@@ -4,8 +4,8 @@
 void ofApp::setup()
 {
     // planets.push_back(Planet(0, {w / 2, h / 2, 0}, -.1));
-    particles.push_back(Particle(0, {200, 190, 0}, 5, 0.001, 0));
-    particles.push_back(Particle(0, {400, 210, 0}, 5, 0.001, 0));
+    particles.push_back(Particle(0, {200, 190, 0}, 5, 1, 0));
+    particles.push_back(Particle(0, {400, 210, 0}, 5, 1, 0));
 }
 
 //--------------------------------------------------------------
