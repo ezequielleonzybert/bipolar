@@ -35,7 +35,6 @@ public:
             }
         }
         acceleration = acceleration_summation;
-        cout << velocity << " " << ofGetFrameNum() << endl;
         velocity += acceleration;
         position += velocity;
     }
