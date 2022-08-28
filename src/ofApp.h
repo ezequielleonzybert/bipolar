@@ -31,4 +31,5 @@ public:
 	vector<Particle> particles;
 	ofEasyCam camera;
 	ofLight light;
+	ofFbo fbo;
 };

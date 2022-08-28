@@ -1,37 +1,47 @@
 #include "ofApp.h"
+#include "utils.h"
 
 //--------------------------------------------------------------
 void ofApp::setup()
 {
-    // planets.push_back(Planet(0, {w / 2, h / 2, 0}, -.1));
-    for (int i = 0; i < 5; i++)
-    {
-        particles.push_back(Particle(0, {ofRandom(0, w / 2), ofRandom(0, h), ofRandom(0, 100)}, 10, 0));
-    }
-    planets.push_back(Planet(0, {0, 0, 0}, 50));
+    ofSetBackgroundAuto(false);
 
-    ofEnableDepthTest();
+    for (int i = 0; i < 50; i++)
+    {
+        particles.push_back(Particle(0, {ofRandom(0, w), ofRandom(0, h), ofRandom(-100, 100)}, .1, 0));
+    }
+    planets.push_back(Planet(0, {w / 2, h / 2, 0}, 1));
+
     ofEnableLighting();
     light.setDirectional();
     light.setDiffuseColor(ofColor::white);
     light.setSpecularColor(ofColor::white);
     light.setOrientation({180, 0, 0});
     light.enable();
+
+    fbo.allocate(w, h, GL_RGBA, 8);
 }
 
 //--------------------------------------------------------------
 void ofApp::update()
 {
+
     for (Particle &p : particles)
     {
         p.update(particles, planets);
     }
+
+    showFps();
 }
 
 //--------------------------------------------------------------
 void ofApp::draw()
 {
-    camera.begin();
+    // camera.begin();
+    fbo.begin();
+    fbo.clear();
+    fbo.clearDepthBuffer(1.f);
+    ofEnableDepthTest();
     for (Particle p : particles)
     {
         p.draw();
@@ -40,7 +50,15 @@ void ofApp::draw()
     {
         p.draw();
     }
-    camera.end();
+    ofDisableDepthTest();
+    fbo.end();
+
+    ofSetColor(ofColor::black, 10);
+    ofDrawRectangle(0, 0, w, h);
+
+    ofSetColor(ofColor::white);
+    fbo.draw(0, 0);
+    // camera.end();
 }
 
 //--------------------------------------------------------------
@@ -61,6 +79,7 @@ void ofApp::mouseMoved(int x, int y)
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button)
 {
+    planets[0].position = {x, h - y, 0};
 }
 
 //--------------------------------------------------------------

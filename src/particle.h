@@ -45,7 +45,7 @@ public:
     void draw()
     {
         ofSetColor(ofColor::white);
-        ofDrawSphere(position, 5);
+        ofDrawSphere(position, 20);
     }
 };
 
