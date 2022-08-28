@@ -6,18 +6,21 @@ void ofApp::setup()
 {
     ofSetBackgroundAuto(false);
 
+    planets.push_back(Planet(0, {w / 2, h / 2, 0}, .0001));
+    planets.push_back(Planet(1, {w / 2, h / 2, 0}, .0001));
+
     for (int i = 0; i < 100; i++)
     {
-        particles.push_back(Particle(0, {ofRandom(h / 3 + w / 4, h * 2 / 3 + w / 4), ofRandom(h / 3, h * 2 / 3), ofRandom(-100, 100)}, .1, 0));
+        particles.push_back(Particle(0, {w / 2, h / 2, 0}, .001, 0, palette));
+        particles.push_back(Particle(1, {w / 2, h / 2, 0}, .001, 1, palette));
     }
-    planets.push_back(Planet(0, {w / 2, h / 2, 0}, .001));
 
-    // ofEnableLighting();
-    // light.setDirectional();
-    // light.setDiffuseColor(ofColor::white);
-    // light.setSpecularColor(ofColor::white);
-    // light.setOrientation({180, 0, 0});
-    // light.enable();
+    ofEnableLighting();
+    light.setDirectional();
+    light.setDiffuseColor(ofColor::white);
+    light.setSpecularColor(ofColor::white);
+    light.setOrientation({180, 0, 0});
+    light.enable();
 
     fbo.allocate(w, h, GL_RGBA, 8);
 }
@@ -25,36 +28,42 @@ void ofApp::setup()
 //--------------------------------------------------------------
 void ofApp::update()
 {
-    planets[0].position.x = cos(ofGetElapsedTimef() * .5) * w / 4 + w / 2;
-    planets[0].position.y = sin(ofGetElapsedTimef() * .5) * h / 4 + h / 2;
+    if (ofGetFrameNum() > 30 && !trigger)
+    {
+        planets[0].position.x = cos(ofGetElapsedTimef() * .1) * w / 4 + w / 2;
+        planets[0].position.y = sin(ofGetElapsedTimef() * .1) * h / 4 + h / 2;
+        planets[1].position.x = cos(ofGetElapsedTimef() * .1 + PI) * w / 4 + w / 2;
+        planets[1].position.y = sin(ofGetElapsedTimef() * .1 + PI) * h / 4 + h / 2;
+    }
+    else
+    {
+        planets[0].position = {w / 2, h / 2, 0};
+        planets[1].position = {w / 2, h / 2, 0};
+    }
+
     for (Particle &p : particles)
     {
         p.update(particles, planets);
     }
 
     showFps();
+    vr.record("/home/ezequiel/Videos/bipolar", 18, 3);
 }
 
 //--------------------------------------------------------------
 void ofApp::draw()
 {
-    // camera.begin();
-
     fbo.begin();
-
     fbo.clear();
     fbo.clearDepthBuffer(1.f);
     ofEnableDepthTest();
-    ofSetColor(255);
+    ofEnableSmoothing();
     for (Particle p : particles)
     {
         p.draw();
     }
-    // for (Planet p : planets)
-    // {
-    //     p.draw();
-    // }
     ofDisableDepthTest();
+    ofDisableSmoothing();
     fbo.end();
 
     ofSetColor(ofColor::black, 10);
@@ -62,12 +71,21 @@ void ofApp::draw()
 
     ofSetColor(ofColor::white);
     fbo.draw(0, 0);
-    // camera.end();
+}
+
+//--------------------------------------------------------------
+void ofApp::exit()
+{
+    vr.stopRecording();
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key)
 {
+    if (key == ' ')
+    {
+        trigger = true;
+    }
 }
 
 //--------------------------------------------------------------
@@ -83,7 +101,6 @@ void ofApp::mouseMoved(int x, int y)
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button)
 {
-    planets[0].position = {x, h - y, 0};
 }
 
 //--------------------------------------------------------------

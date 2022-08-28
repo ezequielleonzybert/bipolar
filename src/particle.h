@@ -11,13 +11,31 @@ public:
     float attraction;
     int type;
     int planet_index;
+    ofColor color;
 
-    Particle(int type, glm::vec3 position, float attraction, int planet_index)
+    Particle(int type, glm::vec3 position, float attraction, int planet_index, ofColor palette[])
     {
         this->type = type;
         this->position = this->previous_position = position;
         this->attraction = attraction;
         this->planet_index = planet_index;
+        float ran = ofRandom(0, TWO_PI);
+        this->velocity = {ofRandom(cos(ran) * -2, cos(ran) * 2),
+                          ofRandom(sin(ran) * -2, sin(ran) * 2),
+                          ofRandom(sin(ran)*-2, sin(ran)*2)};
+        this->position += velocity;
+
+        int r;
+        if (type)
+        {
+            r = (int)ofRandom(0, 2);
+            color = palette[r];
+        }
+        else
+        {
+            r = (int)ofRandom(2, 4) % 3;
+            color = palette[r];
+        }
     };
     void update(vector<Particle> &particles, vector<Planet> planets)
     {
@@ -38,7 +56,7 @@ public:
                     -(direction_to_particle / distance_to_particle * p.attraction);
             }
         }
-        float limit = 3;
+        float limit = 1;
         acceleration = acceleration_summation;
         velocity += acceleration;
         velocity.x = ofClamp(velocity.x, -limit, limit);
@@ -49,17 +67,15 @@ public:
     }
     void draw()
     {
-
+        float distance = glm::distance(position, previous_position);
         glm::vec3 direction = glm::normalize(position - previous_position);
-        // float angle = atan2(direction);
+
         ofNoFill();
-        // ofSetLineWidth();
-        ofPushMatrix();
-        ofTranslate(position);
-        ofRotateDeg(180, direction.x, direction.y, direction.z);
-        ofDrawCircle(0, 0, 0, 1);
-        ofPopMatrix();
-        // ofDrawSphere(position, 20);
+        ofSetColor(color);
+        for (int i = 0; i < distance * 1.f; i++)
+        {
+            ofDrawSphere(previous_position + direction * i / 1.f, 3);
+        }
     }
 };
 
