@@ -10,7 +10,7 @@ public:
     glm::vec3 position;
     float attraction;
 
-    Planet(int index, glm::vec3 position, float atraction)
+    Planet(int index, glm::vec3 position, float attraction)
     {
         this->index = index;
         this->position = position;
@@ -22,7 +22,8 @@ public:
     }
     void draw()
     {
-        ofDrawCircle(position, 10);
+        ofSetColor(ofColor::red);
+        ofDrawSphere(position, 10);
     }
 };
 

@@ -29,4 +29,6 @@ public:
 
 	vector<Planet> planets;
 	vector<Particle> particles;
+	ofEasyCam camera;
+	ofLight light;
 };
