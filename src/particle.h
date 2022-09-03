@@ -22,7 +22,7 @@ public:
         float ran = ofRandom(0, TWO_PI);
         this->velocity = {ofRandom(cos(ran) * -2, cos(ran) * 2),
                           ofRandom(sin(ran) * -2, sin(ran) * 2),
-                          ofRandom(sin(ran)*-2, sin(ran)*2)};
+                          ofRandom(sin(ran) * -2, sin(ran) * 2)};
         this->position += velocity;
 
         int r;
@@ -65,12 +65,18 @@ public:
         previous_position = position;
         position += velocity;
     }
-    void draw()
+    void draw(bool trigger)
     {
         float distance = glm::distance(position, previous_position);
         glm::vec3 direction = glm::normalize(position - previous_position);
 
-        ofNoFill();
+        // ofNoFill();
+        if (trigger)
+        {
+            static float b = 0;
+            b += 0.001;
+            color.set(color + b);
+        }
         ofSetColor(color);
         for (int i = 0; i < distance * 1.f; i++)
         {

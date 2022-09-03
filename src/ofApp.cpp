@@ -4,7 +4,9 @@
 //--------------------------------------------------------------
 void ofApp::setup()
 {
-    ofSetBackgroundAuto(false);
+    // ofSetBackgroundAuto(false);
+    ofBackground(0);
+    ofSetVerticalSync(false);
 
     planets.push_back(Planet(0, {w / 2, h / 2, 0}, .0001));
     planets.push_back(Planet(1, {w / 2, h / 2, 0}, .0001));
@@ -22,7 +24,7 @@ void ofApp::setup()
     light.setOrientation({180, 0, 0});
     light.enable();
 
-    fbo.allocate(w, h, GL_RGBA, 8);
+    fbo.allocate(w, h, GL_RGBA32F);
 }
 
 //--------------------------------------------------------------
@@ -47,30 +49,35 @@ void ofApp::update()
     }
 
     showFps();
-    vr.record("/home/ezequiel/Videos/bipolar", 18, 3);
+    // vr.record("/home/ezequiel/Videos/bipolar", 18, 3);
 }
 
 //--------------------------------------------------------------
 void ofApp::draw()
 {
+    ofEnableAlphaBlending();
     fbo.begin();
-    fbo.clear();
     fbo.clearDepthBuffer(1.f);
     ofEnableDepthTest();
     ofEnableSmoothing();
     for (Particle p : particles)
     {
-        p.draw();
+        p.draw(trigger);
     }
-    ofDisableDepthTest();
-    ofDisableSmoothing();
-    fbo.end();
+    if (ofGetFrameNum() % 2 == 0)
+    {
+        ofSetColor(ofColor::black, 1);
+        ofDrawRectangle(0, 0, w, h);
+    }
 
-    ofSetColor(ofColor::black, 10);
-    ofDrawRectangle(0, 0, w, h);
+    ofEnableSmoothing();
+    ofDisableDepthTest();
+    fbo.end();
 
     ofSetColor(ofColor::white);
     fbo.draw(0, 0);
+
+    ofDisableAlphaBlending();
 }
 
 //--------------------------------------------------------------
